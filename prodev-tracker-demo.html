@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProDev Tracker - Interactive Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 {
+            color: #764ba2;
+            margin: 20px 0 10px;
+            font-size: 1.2em;
+        }
+
+        .emoji {
+            font-size: 1.3em;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.5s ease;
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .score-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .score-item .label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .score-item .value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .feature-list, .milestone-list, .dependency-list {
+            margin-top: 15px;
+        }
+
+        .feature-item, .milestone-item, .dependency-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #764ba2;
+        }
+
+        .feature-item.required {
+            border-left-color: #f5576c;
+        }
+
+        .feature-item.high {
+            border-left-color: #ff9500;
+        }
+
+        .feature-item h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .feature-item .meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .badge.critical {
+            background: #ffe0e0;
+            color: #d32f2f;
+        }
+
+        .badge.high {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .badge.medium {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge.feasible {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .section-breakdown {
+            margin-top: 15px;
+        }
+
+        .section-row {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            gap: 10px;
+        }
+
+        .section-name {
+            width: 200px;
+            font-weight: 500;
+        }
+
+        .section-bar {
+            flex: 1;
+            background: #e0e0e0;
+            height: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .section-bar-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            color: white;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .blocker {
+            background: #ffe0e0;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid #d32f2f;
+            color: #d32f2f;
+        }
+
+        .warning {
+            background: #fff3e0;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid #f57c00;
+            color: #f57c00;
+        }
+
+        .success {
+            background: #e8f5e9;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid #388e3c;
+            color: #388e3c;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .template-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .template-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .template-card .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .template-card .name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #1976d2;
+            color: #1976d2;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .readiness-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .readiness-indicator.ready {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .readiness-indicator.not-ready {
+            background: #ffe0e0;
+            color: #d32f2f;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 ProDev Tracker</h1>
+            <p class="subtitle">Comprehensive Product Development Tracking System</p>
+            <p class="subtitle" style="margin-top: 10px;">Interactive Demo - Explore the Comprehensive PRD System</p>
+        </header>
+
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="switchTab('create')">🎯 Create PRD</button>
+            <button class="tab-button" onclick="switchTab('features')">✨ Features</button>
+            <button class="tab-button" onclick="switchTab('validation')">✅ Validation</button>
+            <button class="tab-button" onclick="switchTab('milestones')">🎯 Milestones</button>
+            <button class="tab-button" onclick="switchTab('dependencies')">🔗 Dependencies</button>
+            <button class="tab-button" onclick="switchTab('learnings')">💡 Learnings</button>
+            <button class="tab-button" onclick="switchTab('summary')">📊 Summary</button>
+        </div>
+
+        <!-- Create PRD Tab -->
+        <div id="tab-create" class="tab-content active">
+            <div class="card">
+                <h2><span class="emoji">🎯</span> Create Comprehensive PRD</h2>
+
+                <div class="info-box">
+                    <strong>Welcome to ProDev Tracker!</strong> Start by creating a comprehensive PRD from an industry template.
+                    This ensures your product is fully planned before development begins.
+                </div>
+
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="productName" placeholder="e.g., Smart Blood Glucose Monitor" value="Smart Blood Glucose Monitor">
+                </div>
+
+                <h3>Choose Product Category</h3>
+                <div class="template-grid">
+                    <div class="template-card" onclick="selectTemplate('software')">
+                        <div class="icon">💻</div>
+                        <div class="name">Software</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('saas')">
+                        <div class="icon">☁️</div>
+                        <div class="name">SaaS</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('hardware-electronics')">
+                        <div class="icon">🔌</div>
+                        <div class="name">Hardware - Electronics</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('medical-device')">
+                        <div class="icon">🏥</div>
+                        <div class="name">Medical Device</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('iot')">
+                        <div class="icon">📡</div>
+                        <div class="name">IoT</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('pharmaceutical')">
+                        <div class="icon">💊</div>
+                        <div class="name">Pharmaceutical</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('food-beverage')">
+                        <div class="icon">🍔</div>
+                        <div class="name">Food & Beverage</div>
+                    </div>
+                    <div class="template-card" onclick="selectTemplate('automotive')">
+                        <div class="icon">🚗</div>
+                        <div class="name">Automotive</div>
+                    </div>
+                </div>
+
+                <div id="selectedTemplate" class="hidden">
+                    <h3>Executive Summary</h3>
+                    <div class="form-group">
+                        <label>Vision Statement</label>
+                        <textarea id="visionStatement" placeholder="What is the long-term vision for this product?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>What (Product Description)</label>
+                        <textarea id="whatDesc" placeholder="What is the product?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Why (Problem/Opportunity)</label>
+                        <textarea id="whyDesc" placeholder="Why does this product need to exist?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Who (Target Users)</label>
+                        <textarea id="whoDesc" placeholder="Who will use this product?"></textarea>
+                    </div>
+
+                    <button onclick="createPRD()">Create PRD</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Tab -->
+        <div id="tab-features" class="tab-content">
+            <div class="main-grid">
+                <div class="card">
+                    <h2><span class="emoji">✨</span> Add Feature</h2>
+
+                    <div class="form-group">
+                        <label>Feature Name</label>
+                        <input type="text" id="featureName" placeholder="e.g., Continuous Glucose Sensing">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="featureDesc" placeholder="Describe the feature in detail"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Priority Level</label>
+                        <select id="featurePriority">
+                            <option value="critical">Critical (Required)</option>
+                            <option value="high">High Priority</option>
+                            <option value="medium">Medium Priority</option>
+                            <option value="low">Low Priority</option>
+                            <option value="optional">Optional</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Feasibility</label>
+                        <select id="featureFeasibility">
+                            <option value="feasible">Feasible</option>
+                            <option value="with-constraints">Feasible with Constraints</option>
+                            <option value="requires-research">Requires Research</option>
+                            <option value="not-feasible">Not Feasible</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estimated Cost ($)</label>
+                        <input type="number" id="featureCost" placeholder="e.g., 50000">
+                    </div>
+
+                    <button onclick="addFeature()">Add Feature</button>
+                </div>
+
+                <div class="card">
+                    <h2><span class="emoji">📋</span> Feature List</h2>
+                    <div id="featureList" class="feature-list">
+                        <p style="color: #999;">No features added yet. Add features to see them here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Validation Tab -->
+        <div id="tab-validation" class="tab-content">
+            <div class="card">
+                <h2><span class="emoji">✅</span> PRD Validation & Completeness</h2>
+
+                <div id="readinessStatus"></div>
+
+                <h3>Overall Completeness</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="overallProgress" style="width: 0%">0%</div>
+                </div>
+
+                <h3>Section Breakdown</h3>
+                <div class="section-breakdown" id="sectionBreakdown"></div>
+
+                <h3>Blockers & Recommendations</h3>
+                <div id="blockersWarnings"></div>
+
+                <button onclick="validatePRD()">Run Validation</button>
+                <button class="btn-secondary" onclick="generateReport()">Generate Full Report</button>
+            </div>
+        </div>
+
+        <!-- Milestones Tab -->
+        <div id="tab-milestones" class="tab-content">
+            <div class="main-grid">
+                <div class="card">
+                    <h2><span class="emoji">🎯</span> Add Milestone</h2>
+
+                    <div class="form-group">
+                        <label>Milestone Title</label>
+                        <input type="text" id="milestoneTitle" placeholder="e.g., FDA Submission">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="milestoneDesc" placeholder="Describe the milestone"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Target Date</label>
+                        <input type="date" id="milestoneDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="milestoneMVP">
+                            Mark as MVP Milestone
+                        </label>
+                    </div>
+
+                    <button onclick="addMilestone()">Add Milestone</button>
+                </div>
+
+                <div class="card">
+                    <h2><span class="emoji">📋</span> Milestone List</h2>
+                    <div id="milestoneList" class="milestone-list">
+                        <p style="color: #999;">No milestones added yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dependencies Tab -->
+        <div id="tab-dependencies" class="tab-content">
+            <div class="main-grid">
+                <div class="card">
+                    <h2><span class="emoji">🔗</span> Add Dependency</h2>
+
+                    <div class="form-group">
+                        <label>Dependency Name</label>
+                        <input type="text" id="depName" placeholder="e.g., AWS Cloud Services">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="depType">
+                            <option value="api">API</option>
+                            <option value="hardware">Hardware Component</option>
+                            <option value="software">Software Library</option>
+                            <option value="service">Service</option>
+                            <option value="consumable">Consumable</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Vendor</label>
+                        <input type="text" id="depVendor" placeholder="e.g., Amazon Web Services">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Monthly Cost ($)</label>
+                        <input type="number" id="depCost" placeholder="e.g., 500">
+                    </div>
+
+                    <button onclick="addDependency()">Add Dependency</button>
+                </div>
+
+                <div class="card">
+                    <h2><span class="emoji">📋</span> Dependencies</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="number" id="depCount">0</div>
+                            <div class="label">Total Dependencies</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="number" id="depMonthlyCost">$0</div>
+                            <div class="label">Monthly Cost</div>
+                        </div>
+                    </div>
+                    <div id="dependencyList" class="dependency-list">
+                        <p style="color: #999;">No dependencies added yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learnings Tab -->
+        <div id="tab-learnings" class="tab-content">
+            <div class="main-grid">
+                <div class="card">
+                    <h2><span class="emoji">💡</span> Add Learning</h2>
+
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="learningTitle" placeholder="e.g., User Testing Insights">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea id="learningContent" placeholder="What did you learn?"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="learningCategory">
+                            <option value="success">Success</option>
+                            <option value="failure">Failure</option>
+                            <option value="insight">Insight</option>
+                            <option value="technique">Technique</option>
+                            <option value="decision">Decision</option>
+                            <option value="pivot">Pivot</option>
+                        </select>
+                    </div>
+
+                    <button onclick="addLearning()">Add Learning</button>
+                </div>
+
+                <div class="card">
+                    <h2><span class="emoji">📚</span> Learning Database</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="number" id="learningCount">0</div>
+                            <div class="label">Total Learnings</div>
+                        </div>
+                    </div>
+                    <div id="learningList" class="feature-list">
+                        <p style="color: #999;">No learnings captured yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Tab -->
+        <div id="tab-summary" class="tab-content">
+            <div class="card">
+                <h2><span class="emoji">📊</span> Project Summary</h2>
+                <div id="projectSummary"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let appState = {
+            prd: null,
+            features: [],
+            milestones: [],
+            dependencies: [],
+            learnings: [],
+            selectedCategory: null
+        };
+
+        // Initialize
+        function init() {
+            updateSummary();
+        }
+
+        // Tab Management
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Update views if needed
+            if (tabName === 'validation') {
+                validatePRD();
+            } else if (tabName === 'summary') {
+                updateSummary();
+            }
+        }
+
+        // Template Selection
+        function selectTemplate(category) {
+            appState.selectedCategory = category;
+            document.getElementById('selectedTemplate').classList.remove('hidden');
+
+            // Highlight selected template
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.style.borderColor = 'transparent';
+            });
+            event.target.closest('.template-card').style.borderColor = '#667eea';
+        }
+
+        // Create PRD
+        function createPRD() {
+            const productName = document.getElementById('productName').value;
+            const visionStatement = document.getElementById('visionStatement').value;
+            const whatDesc = document.getElementById('whatDesc').value;
+            const whyDesc = document.getElementById('whyDesc').value;
+            const whoDesc = document.getElementById('whoDesc').value;
+
+            if (!productName || !appState.selectedCategory) {
+                alert('Please enter a product name and select a category');
+                return;
+            }
+
+            appState.prd = {
+                productName,
+                category: appState.selectedCategory,
+                executiveSummary: {
+                    visionStatement,
+                    what: whatDesc,
+                    why: whyDesc,
+                    who: whoDesc
+                },
+                created: new Date()
+            };
+
+            alert('✅ PRD Created Successfully!\n\nProduct: ' + productName + '\nCategory: ' + appState.selectedCategory);
+            switchTab('features');
+        }
+
+        // Add Feature
+        function addFeature() {
+            if (!appState.prd) {
+                alert('Please create a PRD first');
+                switchTab('create');
+                return;
+            }
+
+            const name = document.getElementById('featureName').value;
+            const description = document.getElementById('featureDesc').value;
+            const priority = document.getElementById('featurePriority').value;
+            const feasibility = document.getElementById('featureFeasibility').value;
+            const cost = parseFloat(document.getElementById('featureCost').value) || 0;
+
+            if (!name || !description) {
+                alert('Please fill in feature name and description');
+                return;
+            }
+
+            const feature = {
+                id: 'feat-' + Date.now(),
+                name,
+                description,
+                priority,
+                feasibility,
+                cost,
+                added: new Date()
+            };
+
+            appState.features.push(feature);
+
+            // Clear form
+            document.getElementById('featureName').value = '';
+            document.getElementById('featureDesc').value = '';
+            document.getElementById('featureCost').value = '';
+
+            renderFeatures();
+            alert('✅ Feature added successfully!');
+        }
+
+        // Render Features
+        function renderFeatures() {
+            const container = document.getElementById('featureList');
+            if (appState.features.length === 0) {
+                container.innerHTML = '<p style="color: #999;">No features added yet.</p>';
+                return;
+            }
+
+            container.innerHTML = appState.features.map(feature => `
+                <div class="feature-item ${feature.priority}">
+                    <h4>${feature.name}</h4>
+                    <p style="margin: 10px 0;">${feature.description}</p>
+                    <div class="meta">
+                        <span class="badge ${feature.priority}">${feature.priority.toUpperCase()}</span>
+                        <span class="badge ${feature.feasibility}">${feature.feasibility}</span>
+                        <span class="badge">$${feature.cost.toLocaleString()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add Milestone
+        function addMilestone() {
+            const title = document.getElementById('milestoneTitle').value;
+            const description = document.getElementById('milestoneDesc').value;
+            const date = document.getElementById('milestoneDate').value;
+            const isMVP = document.getElementById('milestoneMVP').checked;
+
+            if (!title || !date) {
+                alert('Please fill in title and target date');
+                return;
+            }
+
+            const milestone = {
+                id: 'ms-' + Date.now(),
+                title,
+                description,
+                targetDate: date,
+                isMVP,
+                status: 'pending',
+                added: new Date()
+            };
+
+            appState.milestones.push(milestone);
+
+            // Clear form
+            document.getElementById('milestoneTitle').value = '';
+            document.getElementById('milestoneDesc').value = '';
+            document.getElementById('milestoneDate').value = '';
+            document.getElementById('milestoneMVP').checked = false;
+
+            renderMilestones();
+            alert('✅ Milestone added successfully!');
+        }
+
+        // Render Milestones
+        function renderMilestones() {
+            const container = document.getElementById('milestoneList');
+            if (appState.milestones.length === 0) {
+                container.innerHTML = '<p style="color: #999;">No milestones added yet.</p>';
+                return;
+            }
+
+            container.innerHTML = appState.milestones.map(ms => `
+                <div class="milestone-item">
+                    <h4>${ms.title} ${ms.isMVP ? '⭐' : ''}</h4>
+                    <p style="margin: 10px 0;">${ms.description}</p>
+                    <div class="meta">
+                        <span class="badge">Target: ${new Date(ms.targetDate).toLocaleDateString()}</span>
+                        ${ms.isMVP ? '<span class="badge critical">MVP</span>' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add Dependency
+        function addDependency() {
+            const name = document.getElementById('depName').value;
+            const type = document.getElementById('depType').value;
+            const vendor = document.getElementById('depVendor').value;
+            const cost = parseFloat(document.getElementById('depCost').value) || 0;
+
+            if (!name || !vendor) {
+                alert('Please fill in dependency name and vendor');
+                return;
+            }
+
+            const dependency = {
+                id: 'dep-' + Date.now(),
+                name,
+                type,
+                vendor,
+                monthlyCost: cost,
+                added: new Date()
+            };
+
+            appState.dependencies.push(dependency);
+
+            // Clear form
+            document.getElementById('depName').value = '';
+            document.getElementById('depVendor').value = '';
+            document.getElementById('depCost').value = '';
+
+            renderDependencies();
+            alert('✅ Dependency added successfully!');
+        }
+
+        // Render Dependencies
+        function renderDependencies() {
+            const container = document.getElementById('dependencyList');
+            const totalCost = appState.dependencies.reduce((sum, dep) => sum + dep.monthlyCost, 0);
+
+            document.getElementById('depCount').textContent = appState.dependencies.length;
+            document.getElementById('depMonthlyCost').textContent = '$' + totalCost.toLocaleString();
+
+            if (appState.dependencies.length === 0) {
+                container.innerHTML = '<p style="color: #999;">No dependencies added yet.</p>';
+                return;
+            }
+
+            container.innerHTML = appState.dependencies.map(dep => `
+                <div class="dependency-item">
+                    <h4>${dep.name}</h4>
+                    <div class="meta">
+                        <span class="badge">${dep.type.toUpperCase()}</span>
+                        <span class="badge">Vendor: ${dep.vendor}</span>
+                        <span class="badge">$${dep.monthlyCost}/mo</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add Learning
+        function addLearning() {
+            const title = document.getElementById('learningTitle').value;
+            const content = document.getElementById('learningContent').value;
+            const category = document.getElementById('learningCategory').value;
+
+            if (!title || !content) {
+                alert('Please fill in title and content');
+                return;
+            }
+
+            const learning = {
+                id: 'learn-' + Date.now(),
+                title,
+                content,
+                category,
+                added: new Date()
+            };
+
+            appState.learnings.push(learning);
+
+            // Clear form
+            document.getElementById('learningTitle').value = '';
+            document.getElementById('learningContent').value = '';
+
+            renderLearnings();
+            alert('✅ Learning captured successfully!');
+        }
+
+        // Render Learnings
+        function renderLearnings() {
+            const container = document.getElementById('learningList');
+            document.getElementById('learningCount').textContent = appState.learnings.length;
+
+            if (appState.learnings.length === 0) {
+                container.innerHTML = '<p style="color: #999;">No learnings captured yet.</p>';
+                return;
+            }
+
+            container.innerHTML = appState.learnings.map(learning => `
+                <div class="feature-item">
+                    <h4>${learning.title}</h4>
+                    <p style="margin: 10px 0;">${learning.content}</p>
+                    <div class="meta">
+                        <span class="badge medium">${learning.category.toUpperCase()}</span>
+                        <span class="badge">${new Date(learning.added).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Validate PRD
+        function validatePRD() {
+            if (!appState.prd) {
+                document.getElementById('readinessStatus').innerHTML = `
+                    <div class="warning">⚠️ No PRD created yet. Please create a PRD first.</div>
+                `;
+                return;
+            }
+
+            // Calculate completeness
+            let completeness = 0;
+            const sections = {
+                'Executive Summary': 0,
+                'Product Definition': 0,
+                'Features': 0,
+                'Technical Requirements': 0,
+                'Business Requirements': 0,
+                'Market Analysis': 0,
+                'Timeline': 0,
+                'Budget & Resources': 0,
+                'Regulatory': 0,
+                'Risk Assessment': 0,
+                'Go-to-Market': 0,
+                'Success Criteria': 0
+            };
+
+            // Executive Summary
+            if (appState.prd.executiveSummary.visionStatement) sections['Executive Summary'] += 25;
+            if (appState.prd.executiveSummary.what) sections['Executive Summary'] += 25;
+            if (appState.prd.executiveSummary.why) sections['Executive Summary'] += 25;
+            if (appState.prd.executiveSummary.who) sections['Executive Summary'] += 25;
+
+            // Features
+            const criticalFeatures = appState.features.filter(f => f.priority === 'critical');
+            if (criticalFeatures.length > 0) sections['Features'] = 70;
+            if (appState.features.length >= 5) sections['Features'] = 100;
+
+            // Calculate overall
+            completeness = Math.round(Object.values(sections).reduce((a, b) => a + b, 0) / Object.keys(sections).length);
+
+            // Readiness
+            const ready = completeness >= 80 && criticalFeatures.length >= 3;
+
+            document.getElementById('readinessStatus').innerHTML = `
+                <div class="readiness-indicator ${ready ? 'ready' : 'not-ready'}">
+                    ${ready ? '✅ Ready for Development' : '❌ Not Ready for Development'}
+                </div>
+            `;
+
+            // Overall progress
+            document.getElementById('overallProgress').style.width = completeness + '%';
+            document.getElementById('overallProgress').textContent = completeness + '%';
+
+            // Section breakdown
+            const sectionHTML = Object.entries(sections).map(([name, score]) => `
+                <div class="section-row">
+                    <div class="section-name">${name}</div>
+                    <div class="section-bar">
+                        <div class="section-bar-fill" style="width: ${score}%">${score}%</div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('sectionBreakdown').innerHTML = sectionHTML;
+
+            // Blockers
+            const blockers = [];
+            if (!appState.prd.executiveSummary.visionStatement) blockers.push('Vision statement missing');
+            if (criticalFeatures.length < 3) blockers.push('Need at least 3 critical features defined');
+            if (appState.milestones.length === 0) blockers.push('No milestones defined');
+
+            const blockersHTML = blockers.length > 0
+                ? blockers.map(b => `<div class="blocker">🚫 ${b}</div>`).join('')
+                : '<div class="success">✅ No critical blockers</div>';
+
+            document.getElementById('blockersWarnings').innerHTML = blockersHTML;
+        }
+
+        // Generate Report
+        function generateReport() {
+            validatePRD();
+
+            const report = `
+# PRD Completeness Report
+Generated: ${new Date().toLocaleString()}
+
+## Product Information
+- Product: ${appState.prd ? appState.prd.productName : 'N/A'}
+- Category: ${appState.prd ? appState.prd.category : 'N/A'}
+
+## Statistics
+- Features Defined: ${appState.features.length}
+- Critical Features: ${appState.features.filter(f => f.priority === 'critical').length}
+- Milestones: ${appState.milestones.length}
+- Dependencies: ${appState.dependencies.length}
+- Learnings Captured: ${appState.learnings.length}
+
+## Next Steps
+1. Complete all required PRD sections
+2. Define at least 3 critical features
+3. Add MVP milestones
+4. Conduct feasibility analysis
+5. Review and validate with stakeholders
+            `;
+
+            alert('Report Generated!\n\n' + report);
+        }
+
+        // Update Summary
+        function updateSummary() {
+            const container = document.getElementById('projectSummary');
+
+            if (!appState.prd) {
+                container.innerHTML = '<p style="color: #999;">Create a PRD to see project summary.</p>';
+                return;
+            }
+
+            const totalCost = appState.features.reduce((sum, f) => sum + f.cost, 0);
+            const monthlyCost = appState.dependencies.reduce((sum, d) => sum + d.monthlyCost, 0);
+            const mvpMilestones = appState.milestones.filter(m => m.isMVP).length;
+
+            container.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="number">${appState.features.length}</div>
+                        <div class="label">Features</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">${appState.milestones.length}</div>
+                        <div class="label">Milestones</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">${appState.dependencies.length}</div>
+                        <div class="label">Dependencies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">${appState.learnings.length}</div>
+                        <div class="label">Learnings</div>
+                    </div>
+                </div>
+
+                <div class="score-grid">
+                    <div class="score-item">
+                        <div class="label">Product Name</div>
+                        <div class="value" style="font-size: 1.2em;">${appState.prd.productName}</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Category</div>
+                        <div class="value" style="font-size: 1.2em;">${appState.prd.category}</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Estimated Dev Cost</div>
+                        <div class="value">$${totalCost.toLocaleString()}</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Monthly Operating Cost</div>
+                        <div class="value">$${monthlyCost.toLocaleString()}</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">Critical Features</div>
+                        <div class="value">${appState.features.filter(f => f.priority === 'critical').length}</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="label">MVP Milestones</div>
+                        <div class="value">${mvpMilestones}</div>
+                    </div>
+                </div>
+
+                <div class="info-box" style="margin-top: 20px;">
+                    <strong>🎯 Product Vision:</strong><br>
+                    ${appState.prd.executiveSummary.visionStatement || 'Not defined yet'}
+                </div>
+            `;
+        }
+
+        // Initialize app
+        init();
+    </script>
+</body>
+</html>
