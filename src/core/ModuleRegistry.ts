@@ -1,4 +1,4 @@
-import { Module, ModuleRegistry as IModuleRegistry } from '../types';
+import { Module, IModuleRegistry } from '../types';
 
 /**
  * Central registry for managing modules in the application

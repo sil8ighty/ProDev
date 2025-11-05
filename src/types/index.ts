@@ -309,7 +309,7 @@ export interface Module {
   destroy?: () => Promise<void>;
 }
 
-export interface ModuleRegistry {
+export interface IModuleRegistry {
   register(module: Module): void;
   unregister(moduleId: string): void;
   get(moduleId: string): Module | undefined;

@@ -1,5 +1,4 @@
 import { PRD, InvestorOverview, ProductType, Milestone, ProjectStatus } from '../types';
-import { v4 as uuidv4 } from 'crypto';
 
 /**
  * Layer 1: Overview/Investor View Manager

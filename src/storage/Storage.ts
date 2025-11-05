@@ -11,6 +11,7 @@ export interface IStorage {
   loadAll(): Promise<Project[]>;
   delete(projectId: string): Promise<void>;
   exists(projectId: string): Promise<boolean>;
+  export(projectId: string, exportPath: string): Promise<void>;
 }
 
 /**
@@ -142,13 +143,14 @@ export class JSONStorage implements IStorage {
     if (!obj || typeof obj !== 'object') return;
 
     for (const key in obj) {
-      if (obj[key] && typeof obj[key] === 'object') {
-        // Check if it's a date string
-        if (typeof obj[key] === 'string' && this.isDateString(obj[key])) {
-          obj[key] = new Date(obj[key]);
-        } else {
-          this.deserializeDates(obj[key]);
-        }
+      if (obj[key] === null || obj[key] === undefined) continue;
+
+      // Check if it's a date string
+      if (typeof obj[key] === 'string' && this.isDateString(obj[key])) {
+        obj[key] = new Date(obj[key]);
+      } else if (typeof obj[key] === 'object') {
+        // Recursively process nested objects
+        this.deserializeDates(obj[key]);
       }
     }
   }
