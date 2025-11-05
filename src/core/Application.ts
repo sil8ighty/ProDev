@@ -8,12 +8,14 @@ import {
   SlideDeck,
   Workflow,
 } from '../types';
+import { ProductCategory } from '../types/comprehensive-prd';
 import { ModuleRegistry } from './ModuleRegistry';
 import { Layer1Manager } from '../layers/Layer1Manager';
 import { Layer2Manager } from '../layers/Layer2Manager';
 import { Layer3Manager } from '../layers/Layer3Manager';
 import { MilestoneManager } from '../modules/MilestoneManager';
 import { DependenciesManager } from '../modules/DependenciesManager';
+import { ComprehensivePRDManager } from '../modules/ComprehensivePRDManager';
 import { SlideDeckGenerator } from '../export/SlideDeckGenerator';
 import { WorkflowEngine } from '../workflow/WorkflowEngine';
 import { JSONStorage, IStorage } from '../storage/Storage';
@@ -30,6 +32,7 @@ export class Application {
   private layer3Manager: Layer3Manager;
   private milestoneManager: MilestoneManager;
   private dependenciesManager: DependenciesManager;
+  private comprehensivePRDManager: ComprehensivePRDManager;
   private slideDeckGenerator: SlideDeckGenerator;
   private workflowEngine: WorkflowEngine;
 
@@ -44,6 +47,7 @@ export class Application {
     this.layer3Manager = new Layer3Manager();
     this.milestoneManager = new MilestoneManager();
     this.dependenciesManager = new DependenciesManager();
+    this.comprehensivePRDManager = new ComprehensivePRDManager();
     this.slideDeckGenerator = new SlideDeckGenerator();
     this.workflowEngine = new WorkflowEngine();
   }
@@ -488,6 +492,53 @@ export class Application {
    */
   public async exportProject(projectId: string, exportPath: string): Promise<void> {
     await this.storage.export(projectId, exportPath);
+  }
+
+  // ============================================================================
+  // COMPREHENSIVE PRD METHODS
+  // ============================================================================
+
+  /**
+   * Create a comprehensive PRD from template
+   */
+  public createComprehensivePRD(productName: string, category: ProductCategory): any {
+    return this.comprehensivePRDManager.createFromTemplate(productName, category);
+  }
+
+  /**
+   * Validate comprehensive PRD
+   */
+  public validateComprehensivePRD(prd: any): any {
+    return this.comprehensivePRDManager.validatePRD(prd);
+  }
+
+  /**
+   * Check if PRD is ready for development
+   */
+  public checkPRDReadiness(prd: any): {
+    ready: boolean;
+    missingRequired: string[];
+    recommendations: string[];
+  } {
+    return this.comprehensivePRDManager.canProceedToDevelopment(prd);
+  }
+
+  /**
+   * Get PRD completeness score
+   */
+  public getPRDCompletenessScore(prd: any): {
+    overall: number;
+    sections: { section: string; score: number }[];
+    criticalMissing: string[];
+  } {
+    return this.comprehensivePRDManager.getCompletenessScore(prd);
+  }
+
+  /**
+   * Generate PRD completeness report
+   */
+  public generatePRDCompletenessReport(prd: any): string {
+    return this.comprehensivePRDManager.generateCompletenessReport(prd);
   }
 
   /**
