@@ -13,6 +13,7 @@ import { Layer1Manager } from '../layers/Layer1Manager';
 import { Layer2Manager } from '../layers/Layer2Manager';
 import { Layer3Manager } from '../layers/Layer3Manager';
 import { MilestoneManager } from '../modules/MilestoneManager';
+import { DependenciesManager } from '../modules/DependenciesManager';
 import { SlideDeckGenerator } from '../export/SlideDeckGenerator';
 import { WorkflowEngine } from '../workflow/WorkflowEngine';
 import { JSONStorage, IStorage } from '../storage/Storage';
@@ -28,6 +29,7 @@ export class Application {
   private layer2Manager: Layer2Manager;
   private layer3Manager: Layer3Manager;
   private milestoneManager: MilestoneManager;
+  private dependenciesManager: DependenciesManager;
   private slideDeckGenerator: SlideDeckGenerator;
   private workflowEngine: WorkflowEngine;
 
@@ -41,6 +43,7 @@ export class Application {
     this.layer2Manager = new Layer2Manager();
     this.layer3Manager = new Layer3Manager();
     this.milestoneManager = new MilestoneManager();
+    this.dependenciesManager = new DependenciesManager();
     this.slideDeckGenerator = new SlideDeckGenerator();
     this.workflowEngine = new WorkflowEngine();
   }
@@ -89,6 +92,7 @@ export class Application {
       ),
       layer2: this.layer2Manager.createTechnicalPackage(this.generateId()),
       layer3: this.layer3Manager.createBehindTheScenes(),
+      dependencies: this.dependenciesManager.createDependenciesLayer(),
       milestones: [],
       tags: [],
       team: [],
@@ -291,6 +295,72 @@ export class Application {
         updates.deployment
       );
     }
+  }
+
+  /**
+   * Add a dependency
+   */
+  public addDependency(params: any): void {
+    if (!this.currentProject) {
+      throw new Error('No active project');
+    }
+
+    this.currentProject.dependencies = this.dependenciesManager.addDependency(
+      this.currentProject.dependencies,
+      params
+    );
+  }
+
+  /**
+   * Update dependency status
+   */
+  public updateDependencyStatus(dependencyId: string, status: any): void {
+    if (!this.currentProject) {
+      throw new Error('No active project');
+    }
+
+    this.currentProject.dependencies = this.dependenciesManager.updateStatus(
+      this.currentProject.dependencies,
+      dependencyId,
+      status
+    );
+  }
+
+  /**
+   * Link dependency to milestone
+   */
+  public linkDependencyToMilestone(dependencyId: string, milestoneId: string): void {
+    if (!this.currentProject) {
+      throw new Error('No active project');
+    }
+
+    this.currentProject.dependencies = this.dependenciesManager.linkToMilestone(
+      this.currentProject.dependencies,
+      dependencyId,
+      milestoneId
+    );
+  }
+
+  /**
+   * Get dependencies report
+   */
+  public getDependenciesReport(): string {
+    if (!this.currentProject) {
+      throw new Error('No active project');
+    }
+
+    return this.dependenciesManager.generateReport(this.currentProject.dependencies);
+  }
+
+  /**
+   * Get cost breakdown
+   */
+  public getCostBreakdown(): string {
+    if (!this.currentProject) {
+      throw new Error('No active project');
+    }
+
+    return this.dependenciesManager.generateCostBreakdown(this.currentProject.dependencies);
   }
 
   /**

@@ -228,6 +228,9 @@ export interface Project {
   layer2: TechnicalPackage;
   layer3: BehindTheScenes;
 
+  // Dependencies and Support
+  dependencies: any; // Will be properly typed after importing from dependencies.ts
+
   // Milestones
   milestones: Milestone[];
 
@@ -314,3 +317,6 @@ export interface ModuleRegistry {
   enable(moduleId: string): void;
   disable(moduleId: string): void;
 }
+
+// Export all dependency types
+export * from './dependencies';
