@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build output
+dist/
+build/
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
+
+# Data storage
+data/
+/data
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Generated exports (not source docs)
+deck.html
+deck.md
+*-deck.html
+*-deck.md
